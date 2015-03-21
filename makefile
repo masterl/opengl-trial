@@ -28,7 +28,7 @@ GENERALSTARTFLAGS = -Wall -std=c++14
 ALLCOMPFLAGS = $(GENERALSTARTFLAGS)
 
 #LINKFLAGS = `pkg-config gtkmm-3.0 --libs` -lboost_system -lboost_filesystem
-LINKFLAGS = -lglut -lGLEW -lGL
+LINKFLAGS = -lglut -lGLEW -lGL -lboost_filesystem -lboost_system
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #	Sources directories

@@ -4,40 +4,20 @@
     |   read_file   |
      --------------
 
-     Reads file 'filename' and store it's contents on 'filecontents'
+     Reads file 'filename' and store it's contents on string 'filecontents'
 */
-// Leitura bloco
 bool Utility_Functions::read_file(const std::string &filename,std::string &filecontents)
 {
-    std::ifstream file(filename.c_str(), std::ios::binary);
-    //const unsigned int bufferSize = 256;
-    //const unsigned int bufferStr = 256;
-    //char aux[bufferStr+2];
-    //unsigned char tam;
+    std::vector<char> content_vector;
 
-    filecontents.clear();
-
-    if( !file.is_open() )
+    if(Utility_Functions::read_file_to_vector(filename,content_vector))
     {
-        return false;
-    }
-    
-    std::size_t file_size = Utility_Functions::get_file_size(file);
+        filecontents.assign(content_vector.data(),content_vector.size());
 
-    //std::cout << "\nread_file::file_size = " << file_size << std::endl;
-
-    if(file_size > 0)
-    {
-        std::vector<char> bytes(file_size);
-        file.read(&bytes[0], file_size);
-        file.close();
-        //std::string strAux(&bytes[0], file_size);
-        //boost::algorithm::erase_all(strAux, "\r");
-        //filecontents = strAux;
-        filecontents.assign(&bytes[0], file_size);
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 /*   ---------------
