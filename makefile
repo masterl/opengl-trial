@@ -28,7 +28,7 @@ GENERALSTARTFLAGS = -Wall -std=c++14
 ALLCOMPFLAGS = $(GENERALSTARTFLAGS)
 
 #LINKFLAGS = `pkg-config gtkmm-3.0 --libs` -lboost_system -lboost_filesystem
-LINKFLAGS = 
+LINKFLAGS = -lglut -lGLEW -lGL
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #	Sources directories
@@ -89,7 +89,7 @@ ALLOBJS :=	$(MAINOBJS) $(UTILSOBJS)
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Executable
 #--------------------------------------------------------------------------
-EXEC := lista1
+EXEC := opengl
 
 BINDIR := bin
 
