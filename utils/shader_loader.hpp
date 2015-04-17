@@ -16,7 +16,7 @@ namespace gl_shaders
     /**
     * Compile the shader from file 'filename', with error handling
     */
-    GLuint create_shader(const char* filename, GLenum type);
+    GLuint create_shader(std::string const &filename, GLenum type);
 
     /*   ------------------------
         |   read_shader_source   |

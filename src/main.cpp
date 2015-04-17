@@ -1,8 +1,9 @@
 #include <iostream>
 
 #include <GL/glew.h>
-
 #include <GL/freeglut.h>
+
+#include "../utils/shader_loader.hpp"
 
 using namespace std;
 
@@ -11,53 +12,11 @@ GLint attribute_coord2d;
 
 bool init_resources(void)
 {
-    GLint compile_ok = GL_FALSE;
     GLint link_ok = GL_FALSE;
 
-    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    GLuint vs = gl_shaders::create_shader("shaders/example_vertex_shader.glsl", GL_VERTEX_SHADER);
 
-    const char *vs_source = 
-    #ifdef GL_ES_VERSION_2_0
-        "#version 100\n"  // OpenGL ES 2.0
-    #else
-        "#version 120\n"  // OpenGL 2.1
-    #endif
-    "attribute vec2 coord2d;                  "
-    "void main(void) {                        "
-    "  gl_Position = vec4(coord2d, 0.0, 1.0); "
-    "}";
-
-    glShaderSource(vs, 1, &vs_source, NULL);
-
-    glCompileShader(vs);
-
-    glGetShaderiv(vs, GL_COMPILE_STATUS, &compile_ok);
-
-    if(0 == compile_ok)
-    {
-        cerr << "Error in vertex shader\n" << endl;
-        return false;
-    }
-
-    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    
-    const char *fs_source =
-    "#version 120           \n"
-    "void main(void) {        "
-    "  gl_FragColor[0] = gl_FragCoord.x/640.0; "
-    "  gl_FragColor[1] = gl_FragCoord.y/480.0; "
-    "  gl_FragColor[2] = 0.3; "
-    "}";
-
-    glShaderSource(fs, 1, &fs_source, NULL);
-    glCompileShader(fs);
-    glGetShaderiv(fs, GL_COMPILE_STATUS, &compile_ok);
-
-    if (!compile_ok)
-    {
-        cerr << "Error in fragment shader\n" << endl;
-        return false;
-    }
+    GLuint fs = gl_shaders::create_shader("shaders/example_fragment_shader.glsl", GL_FRAGMENT_SHADER);
 
     program = glCreateProgram();
     glAttachShader(program, vs);

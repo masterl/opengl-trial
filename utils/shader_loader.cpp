@@ -37,20 +37,14 @@ void gl_shaders::print_log(GLuint object)
     throw std::invalid_argument(std::string(log_msg.data()));
 }
 
-GLuint  gl_shaders::create_shader(const char* filename, GLenum type)
+GLuint  gl_shaders::create_shader(std::string const &filename, GLenum type)
 {
     std::vector<GLchar> source_vector;
 
-    if(read_shader_source(filename,source_vector))
+    if(!read_shader_source(filename,source_vector))
     {
-        throw std::runtime_error("Couldn't read shader file " + std::string(filename));
+        throw std::runtime_error("Couldn't read shader file " + filename);
     }
-
-    // if (source == NULL)
-    // {
-    //    fprintf(stderr, "Error opening %s: ", filename); perror("");
-    //     return 0;
-    // }
 
     GLuint res = glCreateShader(type);
 
@@ -62,14 +56,16 @@ GLuint  gl_shaders::create_shader(const char* filename, GLenum type)
             "#version 120\n",
         #endif
             source_vector.data() };
+
     glShaderSource(res, 2, sources, NULL);
 
     glCompileShader(res);
     GLint compile_ok = GL_FALSE;
     glGetShaderiv(res, GL_COMPILE_STATUS, &compile_ok);
-    if (compile_ok == GL_FALSE)
+
+    if(compile_ok == GL_FALSE)
     {
-        fprintf(stderr, "%s:", filename);
+        std::cerr << "\n" << filename << ": ";
         print_log(res);
         glDeleteShader(res);
         return 0;
