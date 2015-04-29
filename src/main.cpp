@@ -14,13 +14,15 @@ bool init_resources(void)
 {
     GLint link_ok = GL_FALSE;
 
-    GLuint vs = gl_shaders::create_shader("shaders/example_vertex_shader.glsl", GL_VERTEX_SHADER);
+    GLuint vertex_shader;
+    gl_shaders::load_shader(vertex_shader,"shaders/example_vertex_shader.glsl",GL_VERTEX_SHADER);
 
-    GLuint fs = gl_shaders::create_shader("shaders/example_fragment_shader.glsl", GL_FRAGMENT_SHADER);
+    GLuint fragment_shader;
+    gl_shaders::load_shader(fragment_shader,"shaders/example_fragment_shader.glsl",GL_FRAGMENT_SHADER);
 
     program = glCreateProgram();
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &link_ok);
     if (!link_ok)
@@ -49,12 +51,12 @@ void onDisplay(void)
     glUseProgram(program);
     glEnableVertexAttribArray(attribute_coord2d);
     GLfloat triangle_vertices[] = {
-         0.0,  0.2,
-        -0.2,  0.0,
-         0.2,  0.0,
-         0.0, -0.3,
-        -0.3,  0.0,
-         0.3,  0.0
+         0.0,  0.5,
+        -0.5,  0.0,
+         0.5,  0.0,
+         0.0, -0.8,
+        -0.8,  0.0,
+         0.8,  0.0
     };
     /* Describe our vertices array to OpenGL (it can't guess its format automatically) */
     glVertexAttribPointer(
@@ -81,26 +83,35 @@ void free_resources(void)
 
 int main(int argc,char *argv[])
 {
-    glutInit(&argc,argv);
-    glutInitContextVersion(2,0);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutCreateWindow("OpenGL doido");
+    try
+    {
+        glutInit(&argc,argv);
+        glutInitContextVersion(2,0);
+        glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+        glutCreateWindow("OpenGL doido");
 
-    GLenum glew_status = glewInit();
-    if(glew_status != GLEW_OK)
-    {
-        cerr << "\nError: " << glewGetErrorString(glew_status) << endl;
-        return 1;
-    }
+        GLenum glew_status = glewInit();
+        if(glew_status != GLEW_OK)
+        {
+            cerr << "\nError: " << glewGetErrorString(glew_status) << endl;
+            return 1;
+        }
 
-    if(init_resources())
-    {
-        glutDisplayFunc(onDisplay);
-        glutMainLoop();
+        if(init_resources())
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glutDisplayFunc(onDisplay);
+            glutMainLoop();
+        }
+        else
+        {
+            cerr << "Couldn't init resources!" << endl;
+        }
     }
-    else
+    catch(std::exception &e)
     {
-        cerr << "Couldn't init resources!" << endl;
+        cerr << "\nFatal error!\n\n" << e.what() << endl;
     }
 
     free_resources();

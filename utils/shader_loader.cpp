@@ -37,7 +37,7 @@ void gl_shaders::print_log(GLuint object)
     throw std::invalid_argument(std::string(log_msg.data()));
 }
 
-GLuint  gl_shaders::create_shader(std::string const &filename, GLenum type)
+GLuint  gl_shaders::create_shader(std::string const &filename, GLenum const &type)
 {
     std::vector<GLchar> source_vector;
 
@@ -82,4 +82,14 @@ bool gl_shaders::read_shader_source(const std::string &filename,std::vector<GLch
         return true;
     }
     return false;
+}
+
+void gl_shaders::load_shader(GLuint &shader,std::string const &filename, GLenum const &type)
+{
+    shader = gl_shaders::create_shader(filename, type);
+
+    if(shader == 0)
+    {
+        throw std::runtime_error("Couldn't compile shader from " + filename);
+    }
 }
