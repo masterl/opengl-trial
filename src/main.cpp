@@ -72,6 +72,14 @@ void onDisplay(void)
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glDisableVertexAttribArray(attribute_coord2d);
 
+
+    // === ERROR TEST ===
+    // GLuint test;
+    // glGenBuffers(-1,&test);
+    // GLenum error_code = glGetError();
+    // cout << "GL_INVALID_VALUE? " << ( error_code == GL_INVALID_VALUE ? "TRUE" : "FALSE") << endl;
+
+
     /* Display the result */
     glutSwapBuffers();
 }
