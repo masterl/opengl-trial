@@ -1,8 +1,9 @@
 #include <iostream>
 
 #include <GL/glew.h>
-
 #include <GL/freeglut.h>
+
+#include "../utils/shader_loader.hpp"
 
 using namespace std;
 
@@ -11,57 +12,17 @@ GLint attribute_coord2d;
 
 bool init_resources(void)
 {
-    GLint compile_ok = GL_FALSE;
     GLint link_ok = GL_FALSE;
 
-    GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+    GLuint vertex_shader;
+    gl_shaders::load_shader(vertex_shader,"shaders/example_vertex_shader.glsl",GL_VERTEX_SHADER);
 
-    const char *vs_source = 
-    #ifdef GL_ES_VERSION_2_0
-        "#version 100\n"  // OpenGL ES 2.0
-    #else
-        "#version 120\n"  // OpenGL 2.1
-    #endif
-    "attribute vec2 coord2d;                  "
-    "void main(void) {                        "
-    "  gl_Position = vec4(coord2d, 0.0, 1.0); "
-    "}";
-
-    glShaderSource(vs, 1, &vs_source, NULL);
-
-    glCompileShader(vs);
-
-    glGetShaderiv(vs, GL_COMPILE_STATUS, &compile_ok);
-
-    if(0 == compile_ok)
-    {
-        cerr << "Error in vertex shader\n" << endl;
-        return false;
-    }
-
-    GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-    
-    const char *fs_source =
-    "#version 120           \n"
-    "void main(void) {        "
-    "  gl_FragColor[0] = gl_FragCoord.x/640.0; "
-    "  gl_FragColor[1] = gl_FragCoord.y/480.0; "
-    "  gl_FragColor[2] = 0.3; "
-    "}";
-
-    glShaderSource(fs, 1, &fs_source, NULL);
-    glCompileShader(fs);
-    glGetShaderiv(fs, GL_COMPILE_STATUS, &compile_ok);
-
-    if (!compile_ok)
-    {
-        cerr << "Error in fragment shader\n" << endl;
-        return false;
-    }
+    GLuint fragment_shader;
+    gl_shaders::load_shader(fragment_shader,"shaders/example_fragment_shader.glsl",GL_FRAGMENT_SHADER);
 
     program = glCreateProgram();
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
+    glAttachShader(program, vertex_shader);
+    glAttachShader(program, fragment_shader);
     glLinkProgram(program);
     glGetProgramiv(program, GL_LINK_STATUS, &link_ok);
     if (!link_ok)
@@ -90,12 +51,12 @@ void onDisplay(void)
     glUseProgram(program);
     glEnableVertexAttribArray(attribute_coord2d);
     GLfloat triangle_vertices[] = {
-         0.0,  0.2,
-        -0.2,  0.0,
-         0.2,  0.0,
-         0.0, -0.3,
-        -0.3,  0.0,
-         0.3,  0.0
+         0.0,  0.5,
+        -0.5,  0.0,
+         0.5,  0.0,
+         0.0, -0.8,
+        -0.8,  0.0,
+         0.8,  0.0
     };
     /* Describe our vertices array to OpenGL (it can't guess its format automatically) */
     glVertexAttribPointer(
@@ -122,26 +83,35 @@ void free_resources(void)
 
 int main(int argc,char *argv[])
 {
-    glutInit(&argc,argv);
-    glutInitContextVersion(2,0);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-    glutCreateWindow("OpenGL doido");
+    try
+    {
+        glutInit(&argc,argv);
+        glutInitContextVersion(2,0);
+        glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+        glutCreateWindow("OpenGL doido");
 
-    GLenum glew_status = glewInit();
-    if(glew_status != GLEW_OK)
-    {
-        cerr << "\nError: " << glewGetErrorString(glew_status) << endl;
-        return 1;
-    }
+        GLenum glew_status = glewInit();
+        if(glew_status != GLEW_OK)
+        {
+            cerr << "\nError: " << glewGetErrorString(glew_status) << endl;
+            return 1;
+        }
 
-    if(init_resources())
-    {
-        glutDisplayFunc(onDisplay);
-        glutMainLoop();
+        if(init_resources())
+        {
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glutDisplayFunc(onDisplay);
+            glutMainLoop();
+        }
+        else
+        {
+            cerr << "Couldn't init resources!" << endl;
+        }
     }
-    else
+    catch(std::exception &e)
     {
-        cerr << "Couldn't init resources!" << endl;
+        cerr << "\nFatal error!\n\n" << e.what() << endl;
     }
 
     free_resources();

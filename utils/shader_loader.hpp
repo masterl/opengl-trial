@@ -16,7 +16,7 @@ namespace gl_shaders
     /**
     * Compile the shader from file 'filename', with error handling
     */
-    GLuint create_shader(const char* filename, GLenum type);
+    GLuint create_shader(std::string const &filename, GLenum const &type);
 
     /*   ------------------------
         |   read_shader_source   |
@@ -24,7 +24,9 @@ namespace gl_shaders
 
          Reads file 'filename' and store it's contents on GLchar vector 'filecontents'
     */
-    bool read_shader_source(const std::string &filename,std::vector<GLchar> &filecontents);
+    bool read_shader_source(std::string const &filename,std::vector<GLchar> &filecontents);
+
+    void load_shader(GLuint &shader,std::string const &filename, GLenum const &type);
 }
 
 #endif
