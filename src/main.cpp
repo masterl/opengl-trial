@@ -96,6 +96,8 @@ int main(int argc,char *argv[])
         glutInit(&argc,argv);
         glutInitContextVersion(2,0);
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+        glutInitWindowSize(1024, 768);
+        glutInitWindowPosition(0, 0);
         glutCreateWindow("OpenGL doido");
 
         GLenum glew_status = glewInit();
