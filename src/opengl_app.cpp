@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include <iostream>
 
+using std::cout;
 using std::cerr;
 using std::endl;
 
@@ -43,8 +44,17 @@ namespace gl_cpp
     {
         GLFWwindow* window_ptr;
 
-        /* Create a windowed mode window and its OpenGL context */
-        window_ptr = glfwCreateWindow(640, 480, _settings.title.c_str(), NULL, NULL);
+        /* Create a windowed mode window and its OpenGL context
+            glfwCreateWindow
+            (
+                int             width,      -> The desired width, in screen coordinates, of the window. This must be greater than zero.
+                int             height,     -> The desired height, in screen coordinates, of the window. This must be greater than zero.
+                const char *    title,      -> The initial, UTF-8 encoded window title.
+                GLFWmonitor *   monitor,    -> The monitor to use for full screen mode, or NULL to use windowed mode.
+                GLFWwindow *    share       -> The window whose context to share resources with, or NULL to not share resources.
+            )
+        */
+        window_ptr = glfwCreateWindow(_settings.window_width, _settings.window_height, _settings.title.c_str(), NULL, NULL);
 
         if (!window_ptr)
         {
@@ -69,6 +79,9 @@ namespace gl_cpp
         /* Make the window's context current */
         glfwMakeContextCurrent(window.get());
 
+        /* wait for 1 screen update before swapping (vsync) */
+        glfwSwapInterval(1);
+
         // glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
         // glutInitWindowSize(_settings.window_width, _settings.window_height);
         // glutInitWindowPosition(0,0);
@@ -82,10 +95,13 @@ namespace gl_cpp
     {
         init_and_create_window();
 
+        print_versions();
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window.get()))
         {
             /* Render here */
+            render();
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window.get());
@@ -110,5 +126,30 @@ namespace gl_cpp
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
+    }
+
+    // =================== MISCELLANEOUS ===================
+    void OpenglApp::print_versions(void)
+    {
+        cout << "Compiled against GLFW "
+             << " " << GLFW_VERSION_MAJOR
+             << "." << GLFW_VERSION_MINOR
+             << "." << GLFW_VERSION_REVISION
+             << endl;
+
+        int major, minor, revision;
+        glfwGetVersion(&major, &minor, &revision);
+        cout << " Running against GLFW "
+             << " " << major
+             << "." << minor
+             << "." << revision
+             << endl;
+        cout << "GLFW version string:\n  " << glfwGetVersionString() << endl;
+
+        cout << "\nOpenGL:"
+             << "\n\t  Vendor: " << glGetString(GL_VENDOR)
+             << "\n\t Version: " << glGetString(GL_VERSION)
+             << "\n\tRenderer: " << glGetString(GL_RENDERER)
+             << endl;
     }
 }
