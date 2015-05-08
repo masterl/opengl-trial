@@ -97,17 +97,51 @@ namespace gl_cpp
 
         print_versions();
 
+        cerr << "Starting up..." << endl;
+        // startup();
+        cerr << "Started up." << endl;
+
+        double last_time = 0.0;
+        double this_time;
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window.get()))
         {
+            this_time = glfwGetTime();
             /* Render here */
-            render();
+            render(this_time - last_time);
+
+            cerr << "Rendering..." << endl;
+
+            float ratio;
+            int width, height;
+            glfwGetFramebufferSize(window.get(), &width, &height);
+            ratio = width / (float) height;
+            glViewport(0, 0, width, height);
+            glClear(GL_COLOR_BUFFER_BIT);
+            glMatrixMode(GL_PROJECTION);
+            glLoadIdentity();
+            glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            glRotatef((float) this_time * 50.f, 0.f, 0.f, 1.f);
+            glBegin(GL_TRIANGLES);
+            glColor3f(1.f, 0.f, 0.f);
+            glVertex3f(-0.6f, -0.4f, 0.f);
+            glColor3f(0.f, 1.f, 0.f);
+            glVertex3f(0.6f, -0.4f, 0.f);
+            glColor3f(0.f, 0.f, 1.f);
+            glVertex3f(0.f, 0.6f, 0.f);
+            glEnd();
+
+            cerr << "Rendered..." << endl;
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window.get());
 
             /* Poll for and process events */
             glfwPollEvents();
+            last_time = this_time;
         }
     }
 

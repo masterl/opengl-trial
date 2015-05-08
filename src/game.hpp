@@ -42,10 +42,64 @@ class Game : public gl_cpp::OpenglApp
         virtual void init(void)
         {
         }
-        virtual void render(void)
+        virtual void startup(void)
         {
-            glClearColor(1.0, 1.0, 1.0, 1.0);
-            glClear(GL_COLOR_BUFFER_BIT);
+            GLint link_ok = GL_FALSE;
+
+            GLuint vertex_shader;
+            gl_shaders::load_shader(vertex_shader,"shaders/example_vertex_shader.glsl",GL_VERTEX_SHADER);
+
+            GLuint fragment_shader;
+            gl_shaders::load_shader(fragment_shader,"shaders/example_fragment_shader.glsl",GL_FRAGMENT_SHADER);
+
+            program = glCreateProgram();
+            glAttachShader(program, vertex_shader);
+            glAttachShader(program, fragment_shader);
+            glLinkProgram(program);
+            glGetProgramiv(program, GL_LINK_STATUS, &link_ok);
+            if (!link_ok)
+            {
+                throw std::runtime_error("Couldn't initialize opengl program!");
+            }
+
+            const char* attribute_name = "coord2d";
+            attribute_coord2d = glGetAttribLocation(program, attribute_name);
+            if (attribute_coord2d == -1)
+            {
+                // cerr << "Could not bind attribute %s\n" << attribute_name << endl;
+                throw std::runtime_error("Couldn't bind attribute" + std::string(attribute_name) + "!");
+            }
+        }
+        virtual void render(double time_delta)
+        {
+
+
+            // glClearColor(1.0, 1.0, 1.0, 1.0);
+            // glClear(GL_COLOR_BUFFER_BIT);
+
+            // glUseProgram(program);
+            // glEnableVertexAttribArray(attribute_coord2d);
+            // GLfloat triangle_vertices[] = {
+            //      0.0,  0.5,
+            //     -0.5,  0.0,
+            //      0.5,  0.0,
+            //      0.0, -0.8,
+            //     -0.8,  0.0,
+            //      0.8,  0.0
+            // };
+            // /* Describe our vertices array to OpenGL (it can't guess its format automatically) */
+            // glVertexAttribPointer(
+            //     attribute_coord2d, // attribute
+            //     2,                 // number of elements per vertex, here (x,y)
+            //     GL_FLOAT,          // the type of each element
+            //     GL_FALSE,          // take our values as-is
+            //     0,                 // no extra data between each position
+            //    triangle_vertices  // pointer to the C array
+            // );
+
+            // /* Push each element in buffer_vertices to the vertex shader */
+            // glDrawArrays(GL_TRIANGLES, 0, 6);
+            // glDisableVertexAttribArray(attribute_coord2d);
         }
     private:
         GLuint program;

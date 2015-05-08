@@ -63,7 +63,11 @@ namespace gl_cpp
             {
             }
 
-            virtual void render(void)
+            virtual void render(double time_delta)
+            {
+            }
+
+            virtual void startup(void)
             {
             }
 
