@@ -22,18 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-void main(void)
-{
-    gl_FragColor[0] = gl_FragCoord.x/320.0;
-    gl_FragColor[1] = gl_FragCoord.y/240.0;
-    gl_FragColor[2] = 0.3;
+#ifndef GAME_H
+#define GAME_H
 
-    if (mod(gl_FragCoord.y, 30.0) > 15)
-    {
-        gl_FragColor[3] = 1;
-    }
-    else
-    {
-        gl_FragColor[3] = 0.4;
-    }
-}
+#include "opengl_app.hpp"
+
+class Game : public gl_cpp::OpenglApp
+{
+    public:
+        Game(void)
+        {
+        }
+    private:
+};
+
+#endif
