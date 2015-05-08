@@ -24,18 +24,30 @@ SOFTWARE.
 
 #include "opengl_app.hpp"
 
+#include <iostream>
+
+using std::cerr;
+using std::endl;
+
 namespace gl_cpp
 {
-    Window create_window(void)
+    OpenglApp::~OpenglApp(void)
+    {
+        /* destroying window before terminating glfw to prevent error */
+        window.reset(nullptr);
+
+        glfwTerminate();
+    }
+
+    Window OpenglApp::create_window(void)
     {
         GLFWwindow* window_ptr;
 
         /* Create a windowed mode window and its OpenGL context */
-        window_ptr = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+        window_ptr = glfwCreateWindow(640, 480, _settings.title.c_str(), NULL, NULL);
 
         if (!window_ptr)
         {
-            glfwTerminate();
             throw std::runtime_error("Couldn't allocate window");
         }
 
@@ -44,11 +56,59 @@ namespace gl_cpp
 
     void OpenglApp::init_and_create_window(void)
     {
+        /* Initialize the library */
+        if (!glfwInit())
+        {
+            throw std::runtime_error("Couldn't initialize GLFW!");
+        }
+
         this->init();
 
-        glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
-        glutInitWindowSize(_settings.window_width, _settings.window_height);
-        glutInitWindowPosition(0,0);
-        glutCreateWindow(_settings.title.c_str());
+        window = create_window();
+
+        /* Make the window's context current */
+        glfwMakeContextCurrent(window.get());
+
+        // glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+        // glutInitWindowSize(_settings.window_width, _settings.window_height);
+        // glutInitWindowPosition(0,0);
+        // glutCreateWindow(_settings.title.c_str());
+
+        glfwSetErrorCallback(OpenglApp::error_callback);
+        glfwSetKeyCallback(window.get(), OpenglApp::key_callback);
+    }
+
+    void OpenglApp::run(void)
+    {
+        init_and_create_window();
+
+        /* Loop until the user closes the window */
+        while (!glfwWindowShouldClose(window.get()))
+        {
+            /* Render here */
+
+            /* Swap front and back buffers */
+            glfwSwapBuffers(window.get());
+
+            /* Poll for and process events */
+            glfwPollEvents();
+        }
+    }
+
+
+    // =================== CALLBACKS ===================
+
+    void OpenglApp::error_callback(int error, const char* description)
+    {
+        cerr << "\nError code: " << error
+             << "\nDescription: " << description << endl;
+    }
+
+    void OpenglApp::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+        if ((key == GLFW_KEY_ESCAPE) && (action == GLFW_PRESS))
+        {
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
     }
 }

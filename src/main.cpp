@@ -29,42 +29,18 @@ SOFTWARE.
 
 using namespace std;
 
-void glfw_init(void)
-{
-    /* Initialize the library */
-    if (!glfwInit())
-    {
-        std::terminate();
-    }
-}
-
 int main(void)
 {
     try
     {
-        glfw_init();
-        gl_cpp::Window window = gl_cpp::create_window();
+        gl_cpp::OpenglApp test_app;
 
-        /* Make the window's context current */
-        glfwMakeContextCurrent(window.get());
-
-        /* Loop until the user closes the window */
-        while (!glfwWindowShouldClose(window.get()))
-        {
-            /* Render here */
-
-            /* Swap front and back buffers */
-            glfwSwapBuffers(window.get());
-
-            /* Poll for and process events */
-            glfwPollEvents();
-        }
+        test_app.run();
     }
     catch(std::exception &e)
     {
         cerr << "\n\tERROR\n" << e.what() << endl;
     }
-    glfwTerminate();
 
     return 0;
 }

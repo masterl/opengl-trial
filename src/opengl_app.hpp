@@ -35,8 +35,6 @@ namespace gl_cpp
 {
     typedef std::unique_ptr<GLFWwindow,void(*)(GLFWwindow*)> Window;
 
-    Window create_window(void);
-
     struct _gl_app_settings
     {
         _gl_app_settings(void):
@@ -53,16 +51,13 @@ namespace gl_cpp
     class OpenglApp
     {
         public:
-            OpenglApp(void)
+            OpenglApp(void):
+                window(nullptr,glfwDestroyWindow)
             {
             }
-            virtual ~OpenglApp(void)
-            {
-            }
-            virtual void run(void) final
-            {
-                init_and_create_window();
-            }
+            virtual ~OpenglApp(void);
+
+            void run(void);
         protected:
             virtual void init(void)
             {
@@ -78,10 +73,16 @@ namespace gl_cpp
                 _settings.window_width = width;
                 _settings.window_height = height;
             }
+
+            Window create_window(void);
         private:
             _gl_app_settings _settings;
+            Window window;
 
             void init_and_create_window(void);
+
+            static void error_callback(int error, const char* description);
+            static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
     };
 }
 
