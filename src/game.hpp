@@ -25,7 +25,9 @@ SOFTWARE.
 #ifndef GAME_H
 #define GAME_H
 
+#include "../utils/shader_loader.hpp"
 #include "opengl_app.hpp"
+
 
 class Game : public gl_cpp::OpenglApp
 {
@@ -33,7 +35,21 @@ class Game : public gl_cpp::OpenglApp
         Game(void)
         {
         }
+        virtual ~Game(void)
+        {
+        }
+    protected:
+        virtual void init(void)
+        {
+        }
+        virtual void render(void)
+        {
+            glClearColor(1.0, 1.0, 1.0, 1.0);
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
     private:
+        GLuint program;
+        GLint attribute_coord2d;
 };
 
 #endif

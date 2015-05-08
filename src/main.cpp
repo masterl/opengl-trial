@@ -24,7 +24,6 @@ SOFTWARE.
 
 #include <iostream>
 
-#include <GLFW/glfw3.h>
 #include "game.hpp"
 
 using namespace std;
@@ -33,9 +32,9 @@ int main(void)
 {
     try
     {
-        gl_cpp::OpenglApp test_app;
+        Game test_game;
 
-        test_app.run();
+        test_game.run();
     }
     catch(std::exception &e)
     {
